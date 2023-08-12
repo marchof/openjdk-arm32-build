@@ -12,7 +12,7 @@ jobs:
       matrix:
         system:
         - cpu: cortex-a7
-          base_image: raspbian_lite:latest
+          base_image: https://downloads.raspberrypi.org/raspios_lite_armhf/images/raspios_lite_armhf-2023-05-03/2023-05-03-raspios-bullseye-armhf-lite.img.xz
           cpu_info: cpuinfo/raspberrypi_4b
     steps:
     - uses: pguyot/arm-runner-action@v2
@@ -23,3 +23,25 @@ jobs:
         commands: |
             lscpu
             lsb_release -a
+            apt-get update
+            apt-get install -y \
+              curl \
+              ca-certificates \
+              fontconfig \
+              autoconf \
+              file \
+              g++ \
+              gcc \
+              libcups2-dev \
+              libfontconfig1-dev \
+              libasound2-dev \
+              libx11-dev \
+              libxext-dev \
+              libxrender-dev \
+              libxrandr-dev \
+              libxtst-dev \
+              libxt-dev \
+              make \
+              unzip \
+              zip
+              
