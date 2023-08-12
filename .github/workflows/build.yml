@@ -22,3 +22,4 @@ jobs:
         cpu_info: ${{ matrix.system.cpu_info }}
         commands: |
             lscpu
+            lsb_release -a
