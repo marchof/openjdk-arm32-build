@@ -20,15 +20,23 @@ jobs:
     name: ${{ matrix.system.name }}
     
     steps:
+    - name: Checkout OpenJDK
+      uses: actions/checkout@v3
+      with:
+        repository: openjdk/jdk
+        ref: master
+    
     - uses: pguyot/arm-runner-action@v2
       with:
         base_image: ${{ matrix.system.base_image }}
         cpu: ${{ matrix.system.cpu }}
         cpu_info: ${{ matrix.system.cpu_info }}
+        bind_mount_repository: true
         image_additional_mb: 1024
         commands: |
             lscpu
             lsb_release -a
+            ldd --version
             apt-get update
             apt-get install -y \
               curl \
@@ -53,4 +61,6 @@ jobs:
             wget --no-verbose -O ./bootstrap_jdk.deb ${{ matrix.system.bootstrap_jdk }}
             sudo apt-get install -y ./bootstrap_jdk.deb
             java --version
+            bash configure --with-native-debug-symbols=none
+            make images
             
