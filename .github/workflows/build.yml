@@ -33,7 +33,9 @@ jobs:
         cpu_info: ${{ matrix.system.cpu_info }}
         bind_mount_repository: true
         image_additional_mb: 1024
+        optimize_image: no
         commands: |
+            # Install prerequisites
             lscpu
             lsb_release -a
             ldd --version
@@ -58,9 +60,33 @@ jobs:
               make \
               unzip \
               zip
-            wget --no-verbose -O ./bootstrap_jdk.deb ${{ matrix.system.bootstrap_jdk }}
+            wget --no-verbose -O bootstrap_jdk.deb ${{ matrix.system.bootstrap_jdk }}
             sudo apt-get install -y ./bootstrap_jdk.deb
+            rm bootstrap_jdk.deb
             java --version
+            
+            # Copy workspace to tmpfs mount, as ext4 will fail on 32bit
+            workspace=$(pwd)
+            mkdir -p /build
+            mount -t tmpfs -o size=4096m tmpfs /build
+            cp -r . /build
+            cd /build
+            
+            # Run build
             bash configure --with-native-debug-symbols=none
             make images
             
+            # Copy build result
+            cp -Lr build/linux-arm-server-release/images/jdk $workspace
+            cd $workspace
+            
+            # Try hard to unmount
+            retries=0
+            while ! umount -f /build ; do
+                retries=$((retries + 1))
+                if [ "${retries}" -ge 10 ]; then
+                    echo "Could not unmount /build after ${retries} attempts, giving up."
+                    exit 1
+                fi
+                sleep 10
+            done
