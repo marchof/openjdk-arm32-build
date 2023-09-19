@@ -31,8 +31,8 @@ jobs:
         base_image: ${{ matrix.system.base_image }}
         cpu: ${{ matrix.system.cpu }}
         cpu_info: ${{ matrix.system.cpu_info }}
-        bind_mount_repository: true
-        image_additional_mb: 1024
+        bind_mount_repository: false
+        image_additional_mb: 4096
         commands: |
             lscpu
             lsb_release -a
