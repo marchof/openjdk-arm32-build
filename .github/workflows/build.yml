@@ -15,7 +15,7 @@ jobs:
           cpu: cortex-a7
           base_image: https://downloads.raspberrypi.org/raspios_lite_armhf/images/raspios_lite_armhf-2023-05-03/2023-05-03-raspios-bullseye-armhf-lite.img.xz
           cpu_info: cpuinfo/raspberrypi_4b
-          bootstrap_jdk: https://github.com/bell-sw/Liberica/releases/download/20.0.2+10/bellsoft-jdk20.0.2+10-linux-arm32-vfp-hflt.deb
+          bootstrap_jdk: https://github.com/bell-sw/Liberica/releases/download/22.0.1+10/bellsoft-jdk22.0.1+10-linux-arm32-vfp-hflt.deb
     
     name: ${{ matrix.system.name }}
     
