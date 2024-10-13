@@ -18,8 +18,8 @@ jobs:
           cpu_info: cpuinfo/raspberrypi_4b
         jdk:
         -  bootstrap: https://github.com/bell-sw/Liberica/releases/download/22.0.1+10/bellsoft-jdk22.0.1+10-linux-arm32-vfp-hflt.deb
-           repository: openjdk/jdk
-           ref: master
+           repository: openjdk/jdk22u
+           ref: jdk-22.0.2-ga
 
     name: ${{ matrix.jdk.repository }}#${{ matrix.jdk.ref }} built on ${{ matrix.system.name }}
 
