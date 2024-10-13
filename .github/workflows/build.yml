@@ -17,9 +17,9 @@ jobs:
           base_image: https://downloads.raspberrypi.org/raspios_lite_armhf/images/raspios_lite_armhf-2023-05-03/2023-05-03-raspios-bullseye-armhf-lite.img.xz
           cpu_info: cpuinfo/raspberrypi_4b
         jdk:
-        -  bootstrap: https://github.com/bell-sw/Liberica/releases/download/22.0.1+10/bellsoft-jdk22.0.1+10-linux-arm32-vfp-hflt.deb
-           repository: openjdk/jdk
-           ref: master
+        -  bootstrap: https://github.com/marchof/openjdk-arm32-build/releases/download/22.0.2-ga/jdk-linux-arm32.zip
+           repository: openjdk/jdk23u
+           ref: jdk-23-ga
 
     name: ${{ matrix.jdk.repository }}#${{ matrix.jdk.ref }} built on ${{ matrix.system.name }}
 
@@ -64,9 +64,13 @@ jobs:
               make \
               unzip \
               zip
-            wget --no-verbose -O bootstrap_jdk.deb ${{ matrix.jdk.bootstrap }}
-            sudo apt-get install -y ./bootstrap_jdk.deb
-            rm bootstrap_jdk.deb
+            
+            # Install Bootstrap JDK
+            wget --no-verbose -O bootstrapjdk.zip ${{ matrix.jdk.bootstrap }}
+            sudo mkdir /bootstrapjdk
+            sudo unzip bootstrapjdk.zip -d /bootstrapjdk
+            sudo ln -s /bootstrapjdk/bin/java /usr/bin/java
+            rm bootstrapjdk.zip
             
             # Copy workspace to tmpfs mount, as ext4 will fail on 32bit
             workspace=$(pwd)
