@@ -12,19 +12,23 @@ jobs:
       matrix:
         system:
         - name: RaspiOS Lite 32 Bit, 11 (Bullseye), Pi 4b
+          platform: linux-arm32
           cpu: cortex-a7
           base_image: https://downloads.raspberrypi.org/raspios_lite_armhf/images/raspios_lite_armhf-2023-05-03/2023-05-03-raspios-bullseye-armhf-lite.img.xz
           cpu_info: cpuinfo/raspberrypi_4b
-          bootstrap_jdk: https://github.com/bell-sw/Liberica/releases/download/22.0.1+10/bellsoft-jdk22.0.1+10-linux-arm32-vfp-hflt.deb
-    
-    name: ${{ matrix.system.name }}
-    
+        jdk:
+        -  bootstrap: https://github.com/bell-sw/Liberica/releases/download/22.0.1+10/bellsoft-jdk22.0.1+10-linux-arm32-vfp-hflt.deb
+           repository: openjdk/jdk
+           ref: master
+
+    name: ${{ matrix.jdk.repository }}#${{ matrix.jdk.ref }} built on ${{ matrix.system.name }}
+
     steps:
     - name: Checkout OpenJDK
       uses: actions/checkout@v4
       with:
-        repository: openjdk/jdk
-        ref: master
+        repository: ${{ matrix.jdk.repository }}
+        ref: ${{ matrix.jdk.ref }}
     
     - uses: pguyot/arm-runner-action@v2
       with:
@@ -60,7 +64,7 @@ jobs:
               make \
               unzip \
               zip
-            wget --no-verbose -O bootstrap_jdk.deb ${{ matrix.system.bootstrap_jdk }}
+            wget --no-verbose -O bootstrap_jdk.deb ${{ matrix.jdk.bootstrap }}
             sudo apt-get install -y ./bootstrap_jdk.deb
             rm bootstrap_jdk.deb
             
@@ -92,5 +96,5 @@ jobs:
             
     - uses: actions/upload-artifact@v4
       with:
-        name: jdk-arm32
+        name: jdk-${{ matrix.system.platform }}
         path: jdk/
