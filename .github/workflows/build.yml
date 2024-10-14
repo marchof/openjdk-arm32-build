@@ -17,9 +17,9 @@ jobs:
           base_image: https://downloads.raspberrypi.org/raspios_lite_armhf/images/raspios_lite_armhf-2023-05-03/2023-05-03-raspios-bullseye-armhf-lite.img.xz
           cpu_info: cpuinfo/raspberrypi_4b
         jdk:
-        -  bootstrap: https://github.com/bell-sw/Liberica/releases/download/22.0.1+10/bellsoft-jdk22.0.1+10-linux-arm32-vfp-hflt.deb
-           repository: openjdk/jdk
-           ref: master
+        -  bootstrap: https://github.com/bell-sw/Liberica/releases/download/21.0.3+12/bellsoft-jdk21.0.3+12-linux-arm32-vfp-hflt-full.deb
+           repository: openjdk/jdk21u
+           ref: jdk-21.0.4-ga
 
     name: ${{ matrix.jdk.repository }}#${{ matrix.jdk.ref }} built on ${{ matrix.system.name }}
 
