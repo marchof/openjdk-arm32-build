@@ -19,7 +19,7 @@ jobs:
         jdk:
         -  bootstrap: https://github.com/marchof/openjdk-arm32-build/releases/download/22.0.2-ga/jdk-linux-arm32.zip
            repository: openjdk/jdk23u
-           ref: jdk-23-ga
+           ref: jdk-23.0.1-ga
 
     name: ${{ matrix.jdk.repository }}#${{ matrix.jdk.ref }} built on ${{ matrix.system.name }}
 
