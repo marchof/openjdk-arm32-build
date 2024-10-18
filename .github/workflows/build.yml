@@ -21,7 +21,7 @@ jobs:
            repository: openjdk/jdk21u
            ref: jdk-21.0.4-ga
 
-    name: ${{ matrix.jdk.repository }}#${{ matrix.jdk.ref }} built on ${{ matrix.system.name }}
+    name: Build ${{ matrix.jdk.repository }}#${{ matrix.jdk.ref }} on ${{ matrix.system.name }}
 
     steps:
     - name: Checkout OpenJDK
@@ -80,7 +80,7 @@ jobs:
             make images
             
             # Copy build result
-            cp -Lr build/linux-arm-server-release/images/jdk $workspace
+            (cd build/linux-arm-server-release/images/jdk && zip -r $workspace/jdk-${{ matrix.system.platform }}.zip .)
             cd $workspace
             
             # Try hard to unmount
@@ -93,8 +93,23 @@ jobs:
                 fi
                 sleep 10
             done
-            
+
     - uses: actions/upload-artifact@v4
       with:
         name: jdk-${{ matrix.system.platform }}
-        path: jdk/
+        path: jdk-${{ matrix.system.platform }}.zip
+
+  createrelease:
+    runs-on: ubuntu-latest
+    name: Create Release ${{ github.ref }}
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/')
+    permissions:
+      contents: write
+    steps:
+    - uses: actions/download-artifact@v4
+      with:
+        merge-multiple: true
+    - uses: softprops/action-gh-release@v2
+      with:
+        files: "*.zip"
