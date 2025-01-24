@@ -47,6 +47,7 @@ jobs:
             ldd --version
             apt-get update
             apt-get install -y \
+              lsof \
               curl \
               ca-certificates \
               fontconfig \
@@ -85,6 +86,9 @@ jobs:
             bash configure --with-native-debug-symbols=none
             make images
             
+            # Kill remaining Java processes so that we can unmount later
+            killall -q java || echo "no more java processes"
+            
             # Copy build result
             (cd build/linux-arm-server-release/images/jdk && zip -r $workspace/jdk-${{ matrix.system.platform }}.zip .)
             cd $workspace
@@ -92,8 +96,10 @@ jobs:
             # Try hard to unmount
             retries=0
             while ! umount -f /build ; do
+                ps auxf
+                lsof -w | grep /build
                 retries=$((retries + 1))
-                if [ "${retries}" -ge 10 ]; then
+                if [ "${retries}" -ge 20 ]; then
                     echo "Could not unmount /build after ${retries} attempts, giving up."
                     exit 1
                 fi
